@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Octokit</id>
+    <version>0.1.5</version>
+    <title>Octokit</title>
+    <authors>GitHub</authors>
+    <owners>GitHub</owners>
+    <licenseUrl>https://github.com/octokit/octokit.net/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/octokit/octokit.net</projectUrl>
+    <iconUrl>https://f.cloud.github.com/assets/19977/1441274/160fba8c-41a9-11e3-831d-61d88fa886f4.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An async-based GitHub API client library for .NET</description>
+    <summary>An async-based GitHub API client library for .NET</summary>
+    <releaseNotes>New client for starring repositories
+New client for retrieving commits
+New client for managing an organization's teams and members
+New client for managing blobs
+New client for retrieving and creating trees
+New client for managing collaborators of a repository</releaseNotes>
+    <copyright>Copyright GitHub 2013</copyright>
+    <language />
+    <tags>GitHub API Octokit</tags>
+    <references>
+      <reference file="Octokit.dll" />
+    </references>
+  </metadata>
+</package>
