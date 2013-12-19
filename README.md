@@ -1,3 +1,3 @@
 test-hooks
 ==========
-Potato-rama
+A cool repo.
