@@ -86,7 +86,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\LowercaseContractResolver.cs" />
     <Compile Include="Models\IssueCommentEvent.cs" />
+    <Compile Include="Models\Merge.cs" />
+    <Compile Include="Models\MergeResult.cs" />
+    <Compile Include="Models\PostableComment.cs" />
+    <Compile Include="Models\PullRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
