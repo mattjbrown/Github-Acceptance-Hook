@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Web.Http;
 using GithubHooks.Helpers;
 using GithubHooks.Models;
@@ -25,7 +26,7 @@ namespace GithubHooks.Controllers
         [HttpPost]
         public IHttpActionResult ProcessHook(IssueCommentEvent commentEvent)
         {
-            var creds = new InMemoryCredentialStore(new Credentials("bc9f717ef4f0a3b9f2ec30a988ea21f08787f535"));
+            var creds = new InMemoryCredentialStore(new Credentials("cb844264d27992bd3e3c8f867c5dce039e86497f"));
             var headerVal = new ProductHeaderValue("GitHooks");
             var github = new GitHubClient(headerVal, creds);
             var apiConnection = new ApiConnection(new Connection(headerVal, creds));
@@ -46,17 +47,52 @@ namespace GithubHooks.Controllers
                         Base = "master",
                         Head = branchName,
                         Title = string.Format("#{0} - {1}", commentEvent.Issue.Number, commentEvent.Issue.Title),
-                        Body = "Pull Request Auto-Created by Acceptbot™"
+                        Body = "Pull Request Auto-Created by Zhenbot™"
                     };
 
-                    var pullReqNumber = apiConnection.Post<Dictionary<string, object>>(new Uri(pullRequestBase), JsonConvert.SerializeObject(pullReq, settings)).Result["number"];
+                    object pullReqNumber = null;
+
+                    try
+                    {
+                        pullReqNumber = apiConnection.Post<Dictionary<string, object>>(new Uri(pullRequestBase), JsonConvert.SerializeObject(pullReq, settings)).Result["number"];
+                    }
+                    catch (Exception e)
+                    {
+                        var comment = new PostableComment()
+                        {
+                            Body = string.Format("Zhenbot™ was unable to create Pull Request for {0}. Sorry about that :person_frowning:. Exception: {1}", branchName, e)
+                        };
+
+                        var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
+                        return BadRequest();
+                    }
 
                     var merge = new Merge()
                     {
                         CommitMessage = "Auto-merging pull request. Beep Boop."
                     };
 
-                    var mergeResult = apiConnection.Put<MergeResult>(new Uri(string.Format(pullRequestMerge, pullReqNumber)), JsonConvert.SerializeObject(merge, settings)).Result;
+                    var mergeResult = new MergeResult()
+                    {
+                        Merged = false
+                    };
+
+                    var mergeUrl = string.Format(pullRequestMerge, pullReqNumber);
+
+                    try
+                    {
+                        mergeResult = apiConnection.Put<MergeResult>(new Uri(mergeUrl), JsonConvert.SerializeObject(merge, settings)).Result;
+                    }
+                    catch (Exception e)
+                    {
+                        var comment = new PostableComment()
+                        {
+                            Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:. Exception: {2}.", pullReqNumber, mergeUrl, e)
+                        };
+
+                        var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
+                        return BadRequest();
+                    }
 
                     if (mergeResult.Merged)
                     {
@@ -64,19 +100,19 @@ namespace GithubHooks.Controllers
 
                         var comment = new PostableComment()
                         {
-                            Body = string.Format("Pulled (#{0}) and deleted {1} :ok_woman:. Acceptbot™ signing off.", pullReqNumber, branchName)
+                            Body = string.Format("Pulled (#{0}) and deleted {1} :ok_woman:. Zhenbot™ signing off.", pullReqNumber, branchName)
                         };
 
-                        var result3 = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
+                        var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
                     }
                     else
                     {
                         var comment = new PostableComment()
                         {
-                            Body = string.Format("Acceptbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:.", pullReqNumber, branchName)
+                            Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:.", pullReqNumber, branchName)
                         };
 
-                        var result3 = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
+                        var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", commentEvent.Issue.Number, JsonConvert.SerializeObject(comment, settings)).Result;
                     }
                 }
             }
