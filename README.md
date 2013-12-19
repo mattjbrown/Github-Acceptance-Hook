@@ -1,3 +1,3 @@
 test-hooks
 ==========
-This repo features code. Documentation non-existent.
+This repo features code. Documentation nearly non-existent.
