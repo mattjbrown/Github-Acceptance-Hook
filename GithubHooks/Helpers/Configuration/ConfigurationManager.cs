@@ -14,6 +14,14 @@
             }
         }
 
+        public static ApiCredentialsConfiguration ApiCredentialsConfig
+        {
+            get
+            {
+                return GetConfiguration<ApiCredentialsConfiguration>("ApiCredentialsConfiguration");
+            }
+        }
+
         private static TConfiguration GetConfiguration<TConfiguration>(string name)
             where TConfiguration : ObjectConfigurationSection
         {

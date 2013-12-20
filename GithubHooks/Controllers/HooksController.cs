@@ -19,8 +19,9 @@ namespace GithubHooks.Controllers
 {
     public class HooksController : ApiController
     {
-        private static string repoName = ConfigurationManager.RepositoryConfig.RepoName;
+        private static string apiKey = ConfigurationManager.ApiCredentialsConfig.Key;
         private static string owner = ConfigurationManager.RepositoryConfig.Owner;
+        private static string repoName = ConfigurationManager.RepositoryConfig.RepoName;
 
         private const string baseUrl = "https://api.github.com";
         private static string pullRequestBase = string.Format("{0}/repos/{1}/{2}/pulls", baseUrl, owner, repoName);
@@ -32,7 +33,7 @@ namespace GithubHooks.Controllers
         [HttpPost]
         public IHttpActionResult ProcessHook(IssueCommentEvent commentEvent)
         {
-            var creds = new InMemoryCredentialStore(new Credentials("cb844264d27992bd3e3c8f867c5dce039e86497f"));
+            var creds = new InMemoryCredentialStore(new Credentials(apiKey));
             var headerVal = new ProductHeaderValue("GitHooks");
             var github = new GitHubClient(headerVal, creds);
             var apiConnection = new ApiConnection(new Connection(headerVal, creds));

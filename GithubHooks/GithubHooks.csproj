@@ -86,6 +86,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Configuration\ApiCredentialsConfiguration.cs" />
     <Compile Include="Helpers\Configuration\ConfigurationManager.cs" />
     <Compile Include="Helpers\LowercaseContractResolver.cs" />
     <Compile Include="Helpers\Configuration\ObjectConfigurationSection.cs" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configuration\Repository.config" />
+    <Content Include="Configuration\ApiCredentials.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
