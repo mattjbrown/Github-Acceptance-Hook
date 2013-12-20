@@ -156,7 +156,7 @@ namespace GithubHooks.Controllers
                 {
                     //naive sleep, I think the problem is with trying to merge IMMEDIATELY
                     Thread.Sleep(5000);
-                    MergePullRequest(pullReqNumber, apiConnection, settings, false);
+                    return MergePullRequest(pullReqNumber, apiConnection, settings, false);
                 }
                 else
                 {
