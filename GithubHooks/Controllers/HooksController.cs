@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using System.Timers;
 using System.Web.Http;
 using GithubHooks.Helpers;
 using GithubHooks.Models;
@@ -69,6 +70,16 @@ namespace GithubHooks.Controllers
             }
             catch (Exception e)
             {
+                var aggregateException = e as AggregateException;
+                if (aggregateException != null)
+                {
+                    var apiException = aggregateException.GetBaseException() as ApiException;
+                    if (apiException != null && apiException.Message.Equals("Pull Request is not mergeable"))
+                    {
+                        
+                    }
+                }
+
                 var comment = new PostableComment()
                 {
                     Body = string.Format("Zhenbot™ was unable to create Pull Request for {0}. Sorry about that :person_frowning:. Exception: {1}", branchName, e)
@@ -78,27 +89,17 @@ namespace GithubHooks.Controllers
                 return BadRequest();
             }
 
-            var merge = new Merge()
-            {
-                CommitMessage = "Auto-merging pull request. Beep Boop."
-            };
-
-            var mergeResult = new MergeResult()
-            {
-                Merged = false
-            };
-
-            var mergeUrl = string.Format(pullRequestMerge, pullReqNumber);
+            MergeResult mergeResult;
 
             try
             {
-                mergeResult = apiConnection.Put<MergeResult>(new Uri(mergeUrl), JsonConvert.SerializeObject(merge, settings)).Result;
+                mergeResult = MergePullRequest(pullReqNumber, apiConnection, settings, true);
             }
             catch (Exception e)
             {
                 var comment = new PostableComment()
                 {
-                    Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:. Exception: {2}.", pullReqNumber, mergeUrl, e)
+                    Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:. Exception: {2}.", pullReqNumber, branchName, e)
                 };
 
                 var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
@@ -127,6 +128,42 @@ namespace GithubHooks.Controllers
             }
 
             return Ok();
+        }
+
+        private MergeResult MergePullRequest(object pullReqNumber, ApiConnection apiConnection, JsonSerializerSettings settings, bool tryAgain)
+        {
+            var merge = new Merge()
+            {
+                CommitMessage = "Auto-merging pull request. Beep Boop."
+            };
+
+            var mergeUrl = string.Format(pullRequestMerge, pullReqNumber);
+
+            try
+            {
+                return apiConnection.Put<MergeResult>(new Uri(mergeUrl), JsonConvert.SerializeObject(merge, settings)).Result;
+            }
+            catch (AggregateException e)
+            {
+                var apiException = e.GetBaseException() as ApiException;
+                if (apiException != null && apiException.Message.Equals("Pull Request is not mergeable") && tryAgain)
+                {
+                    //naive sleep, I think the problem is with trying to merge IMMEDIATELY
+                    var timer = new Timer()
+                    {
+                        AutoReset = false,
+                        Interval = 5000,
+                        Enabled = true
+                    };
+                    timer.Elapsed += delegate { MergePullRequest(pullReqNumber, apiConnection, settings, false); };
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+
+            return null;
         }
 
         private string getBranchNameFromComment(string comment)
