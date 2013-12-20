@@ -91,7 +91,7 @@ namespace GithubHooks.Controllers
                     Body = string.Format("Zhenbot™ was unable to create Pull Request for {0}. Sorry about that :person_frowning:. Exception: {1}", branchName, e)
                 };
 
-                var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
+                var finalComment = github.Issue.Comment.Create(owner, repoName, issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
                 return BadRequest();
             }
 
@@ -108,7 +108,7 @@ namespace GithubHooks.Controllers
                     Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:. Exception: {2}.", pullReqNumber, branchName, e)
                 };
 
-                var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
+                var finalComment = github.Issue.Comment.Create(owner, repoName, issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
                 return BadRequest();
             }
 
@@ -121,7 +121,7 @@ namespace GithubHooks.Controllers
                     Body = string.Format("Pulled (#{0}) and deleted {1} :ok_woman:. Zhenbot™ signing off.", pullReqNumber, branchName)
                 };
 
-                var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
+                var finalComment = github.Issue.Comment.Create(owner, repoName, issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
             }
             else
             {
@@ -130,7 +130,7 @@ namespace GithubHooks.Controllers
                     Body = string.Format("Zhenbot™ was unable to merge Pull Request #{0} for {1}. Sorry about that :person_frowning:.", pullReqNumber, branchName)
                 };
 
-                var finalComment = github.Issue.Comment.Create("mattjbrown", "test-hooks", issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
+                var finalComment = github.Issue.Comment.Create(owner, repoName, issueNumber, JsonConvert.SerializeObject(comment, settings)).Result;
             }
 
             return Ok();
