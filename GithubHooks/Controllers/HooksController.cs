@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
@@ -22,6 +23,7 @@ namespace GithubHooks.Controllers
         private static string apiKey = ConfigurationManager.ApiCredentialsConfig.Key;
         private static string owner = ConfigurationManager.RepositoryConfig.Owner;
         private static string repoName = ConfigurationManager.RepositoryConfig.RepoName;
+        private string[] allowedUsers = ConfigurationManager.AllowedMergersConfiguration.Mergers;
 
         private const string baseUrl = "https://api.github.com";
         private static string pullRequestBase = string.Format("{0}/repos/{1}/{2}/pulls", baseUrl, owner, repoName);
@@ -45,7 +47,7 @@ namespace GithubHooks.Controllers
 
             if (commentEvent != null)
             {
-                if (commentEvent.Comment.User.Login.Equals("mattjbrown") && checkComment(commentEvent.Comment.Body))
+                if (allowedUsers.Contains(commentEvent.Comment.User.Login) && checkComment(commentEvent.Comment.Body))
                 {
                     var branchName = getBranchNameFromComment(commentEvent.Comment.Body);
 

@@ -22,6 +22,14 @@
             }
         }
 
+        public static AllowedMergersConfiguration AllowedMergersConfiguration
+        {
+            get
+            {
+                return GetConfiguration<AllowedMergersConfiguration>("AllowedMergersConfiguration");
+            }
+        }
+
         private static TConfiguration GetConfiguration<TConfiguration>(string name)
             where TConfiguration : ObjectConfigurationSection
         {
