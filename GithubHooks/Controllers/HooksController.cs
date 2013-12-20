@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Web.Http;
 using GithubHooks.Helpers;
@@ -149,13 +150,8 @@ namespace GithubHooks.Controllers
                 if (apiException != null && apiException.Message.Equals("Pull Request is not mergeable") && tryAgain)
                 {
                     //naive sleep, I think the problem is with trying to merge IMMEDIATELY
-                    var timer = new Timer()
-                    {
-                        AutoReset = false,
-                        Interval = 5000,
-                        Enabled = true
-                    };
-                    timer.Elapsed += delegate { MergePullRequest(pullReqNumber, apiConnection, settings, false); };
+                    Thread.Sleep(5000);
+                    MergePullRequest(pullReqNumber, apiConnection, settings, false);
                 }
                 else
                 {
