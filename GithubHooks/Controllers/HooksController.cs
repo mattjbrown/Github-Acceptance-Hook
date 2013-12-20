@@ -158,13 +158,12 @@ namespace GithubHooks.Controllers
                     Thread.Sleep(5000);
                     return MergePullRequest(pullReqNumber, apiConnection, settings, false);
                 }
-                else
-                {
-                    throw e;
-                }
             }
 
-            return null;
+            return new MergeResult()
+            {
+                Merged = false
+            };
         }
 
         private string getBranchNameFromComment(string comment)
