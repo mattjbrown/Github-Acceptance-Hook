@@ -86,7 +86,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Configuration\ConfigurationManager.cs" />
     <Compile Include="Helpers\LowercaseContractResolver.cs" />
+    <Compile Include="Helpers\Configuration\ObjectConfigurationSection.cs" />
+    <Compile Include="Helpers\Configuration\RepositoryConfiguration.cs" />
     <Compile Include="Models\IssueCommentEvent.cs" />
     <Compile Include="Models\Merge.cs" />
     <Compile Include="Models\MergeResult.cs" />
@@ -96,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Configuration\Repository.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

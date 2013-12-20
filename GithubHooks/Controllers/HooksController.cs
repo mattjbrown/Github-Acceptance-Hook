@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using System.Web.Http;
+using GithubHooks.Configuration;
 using GithubHooks.Helpers;
 using GithubHooks.Models;
 using Newtonsoft.Json;
@@ -18,10 +19,13 @@ namespace GithubHooks.Controllers
 {
     public class HooksController : ApiController
     {
-        private const string baseUrl = "https://api.github.com/";
-        private const string pullRequestBase = baseUrl + "repos/mattjbrown/test-hooks/pulls";
-        private const string pullRequestMerge = pullRequestBase + "/{0}/merge";
-        private const string deleteBranch = baseUrl + "repos/mattjbrown/test-hooks/git/refs/heads/{0}";
+        private static string repoName = ConfigurationManager.RepositoryConfig.RepoName;
+        private static string owner = ConfigurationManager.RepositoryConfig.Owner;
+
+        private const string baseUrl = "https://api.github.com";
+        private static string pullRequestBase = string.Format("{0}/repos/{1}/{2}/pulls", baseUrl, owner, repoName);
+        private static string pullRequestMerge = pullRequestBase + "/{0}/merge";
+        private static string deleteBranch = string.Format("{0}/repos/{1}/{2}/git/refs/heads", baseUrl, owner, repoName) + "/{0}";
 
 
         [Route("hook")]
