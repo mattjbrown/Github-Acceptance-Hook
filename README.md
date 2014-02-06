@@ -1,8 +1,7 @@
-test-hooks
+Github-Acceptance-Hook
 ==========
-This repo features code. Documentation nearly non-existent. And Potatos sometimes.
+This repo contains code for an API with a /hooks route, meant to be used as a callback for Github issue comment events.
 
-AND Cloncos.
+It's made to look for a configurable keyword for a configurable set of users, and automatically create a pull request and merge it for the related branch. 
 
-Let's go home.
-ddsadsadsa
+The purpose is to allow product reps control over 'acceptance' of features without needing the code themselves.
